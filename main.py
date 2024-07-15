@@ -49,8 +49,8 @@ def run(args: DictConfig):
     #     Optimizer
     # ------------------
     #optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    #optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1.7*1e-3) #L2正則化の場合、Adamの引数に渡すだけで良い。次元圧縮がしたいわけではないなめ、L1ではなくL2正則化を行う。
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.99), weight_decay=0.1)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1.7*1e-3) #L2正則化の場合、Adamの引数に渡すだけで良い。次元圧縮がしたいわけではないなめ、L1ではなくL2正則化を行う。
+    #optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.99), weight_decay=0.1)
 
     """
     scheduler = CosineScheduler(args.epochs, args.lr, args.warmup_length)
