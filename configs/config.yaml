@@ -1,13 +1,14 @@
 batch_size: 128
 epochs: 80
-lr: 0.001
+lr: 0.0005
+warmup_length: 2
 
 device: cuda:0
 num_workers: 4
-seed: 1234
-use_wandb: False
+seed: 4869
+use_wandb: True
 
 data_dir: data
 
 # Evaluation
-model_path: 
+model_path: /gpfs02/work/kanmi.nose/DLBasics2023_colab/dl_lecture_competition_pub/outputs/2024-07-10/13-19-14/model_best.pt

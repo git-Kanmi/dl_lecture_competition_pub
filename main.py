@@ -10,7 +10,9 @@ from termcolor import cprint
 from tqdm import tqdm
 
 from src.datasets import ThingsMEGDataset
+from src.datasets import MyThingsMEGDataset
 from src.models import BasicConvClassifier
+from src.models import CosineScheduler
 from src.utils import set_seed
 
 
@@ -27,11 +29,11 @@ def run(args: DictConfig):
     # ------------------
     loader_args = {"batch_size": args.batch_size, "num_workers": args.num_workers}
     
-    train_set = ThingsMEGDataset("train", args.data_dir)
+    train_set = MyThingsMEGDataset("train", args.data_dir)
     train_loader = torch.utils.data.DataLoader(train_set, shuffle=True, **loader_args)
-    val_set = ThingsMEGDataset("val", args.data_dir)
+    val_set = MyThingsMEGDataset("val", args.data_dir)
     val_loader = torch.utils.data.DataLoader(val_set, shuffle=False, **loader_args)
-    test_set = ThingsMEGDataset("test", args.data_dir)
+    test_set = MyThingsMEGDataset("test", args.data_dir)
     test_loader = torch.utils.data.DataLoader(
         test_set, shuffle=False, batch_size=args.batch_size, num_workers=args.num_workers
     )
@@ -46,8 +48,17 @@ def run(args: DictConfig):
     # ------------------
     #     Optimizer
     # ------------------
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1.7*1e-3) #L2正則化の場合、Adamの引数に渡すだけで良い。次元圧縮がしたいわけではないなめ、L1ではなくL2正則化を行う。
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.99), weight_decay=0.1)
 
+    """
+    scheduler = CosineScheduler(args.epochs, args.lr, args.warmup_length)
+    def set_lr(lr, optimizer):
+        for param_group in optimizer.param_groups:
+            param_group["lr"] = lr
+    """
+    
     # ------------------
     #   Start training
     # ------------------  
@@ -58,6 +69,12 @@ def run(args: DictConfig):
       
     for epoch in range(args.epochs):
         print(f"Epoch {epoch+1}/{args.epochs}")
+
+        """
+        # スケジューラで学習率を更新する
+        #new_lr = scheduler(epoch)
+        #set_lr(new_lr, optimizer)
+        """
         
         train_loss, train_acc, val_loss, val_acc = [], [], [], []
         
@@ -96,6 +113,7 @@ def run(args: DictConfig):
             cprint("New best.", "cyan")
             torch.save(model.state_dict(), os.path.join(logdir, "model_best.pt"))
             max_val_acc = np.mean(val_acc)
+
             
     
     # ----------------------------------
