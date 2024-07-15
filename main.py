@@ -53,6 +53,7 @@ def run(args: DictConfig):
     #optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.99), weight_decay=0.1)
 
     """
+    スケジューラーを使う場合
     scheduler = CosineScheduler(args.epochs, args.lr, args.warmup_length)
     def set_lr(lr, optimizer):
         for param_group in optimizer.param_groups:
@@ -71,7 +72,7 @@ def run(args: DictConfig):
         print(f"Epoch {epoch+1}/{args.epochs}")
 
         """
-        # スケジューラで学習率を更新する
+        スケジューラで学習率を更新する場合
         #new_lr = scheduler(epoch)
         #set_lr(new_lr, optimizer)
         """
