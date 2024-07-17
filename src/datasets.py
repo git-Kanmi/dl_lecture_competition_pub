@@ -48,7 +48,7 @@ class MyThingsMEGDataset(torch.utils.data.Dataset):
         self.split = split
         self.num_classes = 1854
 
-        def decim(data, q=2):#サンプリング数1/qにダウンサンプリング。エイリアスを考慮。
+        def decim(data, q=12):#サンプリング数1/qにダウンサンプリング。エイリアスを考慮。
             return signal.decimate(data, q)
 
         def lowpass_filter(data, cutoff_frequency=30, sampling_rate=200, order=5):
